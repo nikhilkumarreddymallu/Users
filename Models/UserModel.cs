@@ -13,7 +13,7 @@ namespace Users.Models
         [Required]
         public string Email { get; set; }
 
-        [Required, MinLength(10), MaxLength(10)]
+        [Required]
         public long MobileNumber { get; set; }
     }
 }

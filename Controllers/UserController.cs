@@ -1,12 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Users.Database;
+using Users.Models;
 
 namespace Users.Controllers
 {
-    public class UserController : Controller
+    [Route("api/[controller]")]
+    public class UserController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly ApplicationDBContext _dbContext;
+        public UserController(ApplicationDBContext dBContext)
+        { 
+            _dbContext = dBContext;
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            return View();
+            var users = _dbContext.Users.ToList();
+
+            return Ok(users);
+        }
+
+        [HttpGet("id")]
+        public IActionResult GetbyId(int id)
+        { 
+            var user = _dbContext.Users.Find(id);
+            return Ok(user);
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser([FromBody]UserModel user)
+        {
+            using (var tranaction = _dbContext.Database.BeginTransaction())
+            {
+                //Setting this Identity ON, to update the primary key
+                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users ON");
+
+                _dbContext.Users.Add(user);
+                _dbContext.SaveChanges();
+
+                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Users OFF");
+
+                tranaction.Commit();
+            }          
+
+            return Ok();
         }
     }
 }
