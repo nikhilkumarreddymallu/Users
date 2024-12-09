@@ -26,6 +26,7 @@ namespace Users.Controllers
         public IActionResult GetbyId(int id)
         { 
             var user = _dbContext.Users.Find(id);
+
             return Ok(user);
         }
 
@@ -46,6 +47,35 @@ namespace Users.Controllers
             }          
 
             return Ok();
+        }
+
+        [HttpPut("id")]
+        public IActionResult UpdateUser(int id, [FromBody]UserModel user)
+        {
+            var existingUser = _dbContext.Users.Find(id);
+            if (existingUser != null)
+            {
+                existingUser.Name = user.Name;
+                existingUser.Email = user.Email;
+                existingUser.MobileNumber = user.MobileNumber;
+
+                _dbContext.Users.Update(existingUser);
+                _dbContext.SaveChanges();
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete("id")]
+        public IActionResult DeleteUser(int id)
+        {
+            var user = _dbContext.Users.Find(id);
+            if (user != null) 
+            {
+                _dbContext.Users.Remove(user);
+                _dbContext.SaveChanges();
+            }
+            return NoContent();
         }
     }
 }

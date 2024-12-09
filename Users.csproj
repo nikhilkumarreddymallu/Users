@@ -17,4 +17,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Client\" />
+  </ItemGroup>
+
 </Project>
